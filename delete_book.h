@@ -20,6 +20,7 @@ void delete_by_author(const char *filename, char *authorToDelete)
         {
             fputs(line, tempFile);
         }
+
     }
 
     // Close both files
@@ -56,7 +57,7 @@ void delete_by_title(const char *filename, const char *titleToDelete)
     // Read the original file line by line
     while (fgets(line, sizeof(line), fptr) != NULL)
     {
-        if (strstr(line, titleToDelete) != NULL)
+        if (strstr(line, titleToDelete) == NULL)
         {
            fputs(line, tempFile);
         }
