@@ -3,20 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structures.h"
-#include "get_data.h"
-#include "search_by_user.h"
-#include "search_by_title.h"
-#include "search_by_author.h"
-#include "upcoming_due_date.h"
-#include "overdue_books.h"
-#include "edit_book.h"
-#include "edit_by_user.h"
-#include "delete_book.h"
-#include "delete_user.h"
-#include "add_book.h"
-#include "add_user.h"
-#include "option.h"
-//global Definition//
+#include "get_data.h" //tea
+#include "search_by_user.h" //layan
+#include "search_by_title.h" //layan
+#include "search_by_author.h" //tea
+#include "upcoming_due_date.h" // layan
+#include "overdue_books.h" //tea
+#include "edit_book.h" //rosi
+#include "edit_by_user.h" //layan
+#include "delete_book.h" //era
+#include "delete_user.h" //tea
+#include "add_book.h" //era
+#include "add_user.h" //rosi
+//er fbds//global Definition//
 #define MAX_PEOPLE 150
 #define MAX_BOOKS 300
 ///teas file name for search by author
@@ -25,14 +24,13 @@ int main()
     //DESIGN//
     int option =1, n;
     char pass[20];
-    printf("\n\t###########################################################################");
-    printf("\n\t############                                                   ############");
-    printf("\n\t############        Library Management System Project          ############");
-    printf("\n\t############                                                   ############");
-    printf("\n\t###########################################################################");
+    printf("\n\t***************************************************************************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t************        Library Management System Project          ************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t***************************************************************************");
     printf("\n\t---------------------------------------------------------------------------\n");
-    printf("\n\t----------------------------------------------------------------------------");
-    printf("\n");
+    printf("\n\t---------------------------------------------------------------------------\n");
     printf("\n\t  **-**-**-**-**-**-**-**-**-**-**-**-**-**-**-**-**-**-**\n");
     printf("\n\t        =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
     printf("\n\t        =                 WELCOME TO                =");
@@ -65,6 +63,9 @@ int main()
     }
     readDataFromFile(libUser, p, &numPeople);
     readBookDataFromFile(libBook, b, &numBooks);
+    //CLOSING THE FILES//
+    fclose(libBook);
+    fclose(libUser);
     int NOB = numBooks, NOU = numPeople;
     //PERFORMING THE TASKS//
     printf("\
@@ -86,7 +87,7 @@ enter your option: ");
 enter your option: ");
             scanf("%d", &n);
             printf("\n---------------\n");
-            if (n == 1){//Layan_Title
+            if (n == 1){//Layan book by Title
                 int i = findBook(NOB, b);
                 if(i != -1)
                     print_book(i, b);
@@ -150,14 +151,31 @@ enter your option: ");
                     editBook(b, NOB);
                 }
                 else if(n == 6){//ERAS ADD BOOKS
-                    const char *filename = "book.txt";/// file name here
-                    add_Books(filename);
+                    const char *filename= "book.txt";
+                    int numBooks = 300;
+                    char inputTitle[50];//book title inputted by the user
+
+                    saveInArray(filename,b, numBooks);
+                    printf ("Enter the name of the book that you want to add on the library:\n");
+                    scanf("%s", inputTitle);
+                    int bookIndex = findBookIndex(b, numBooks, inputTitle);
+                //checking if the book exists in the file
+                    if (bookIndex != -1){
+                        update_Book_Quantity(filename, bookIndex);
+                        printf("Quantity updated successfully in the file.\n");
+                    }
+
+                    else
+                    {
+                        printf ("This book does not exist. You are adding the book in the library.\n");
+                        addBook(filename,b, inputTitle);
+                    }
                 }
                 else if(n == 7){//ROSIS ADD USERS
                     addUser(p, &NOU);
                                         }
                 else if(n == 8){//TEAS DELETE USER
-                    char filename[] = "user.txt";
+                     char filename[] = "user.txt";
                     int search_type;
                     char key[20];
                     printf("Enter search type (1 for ID, 2 for name, 3 for surname, 4 for phone): ");
@@ -165,7 +183,6 @@ enter your option: ");
                     printf("Enter search key: ");
                     scanf("%s", key);
                     delete_user(filename, key, search_type);
-
                 }
                 else if(n == 9){//ERAS DELETE BOOKS
                     const char *filename = "book.txt";
@@ -181,7 +198,7 @@ enter your option: ");
                         for(int i=0; i<nrOfBooksToBeDeleted; i++)
                         {
                             printf("Which book do you want to delete?\n");
-                            scanf ("%s", titleToDelete);
+                            scanf("%s", titleToDelete);
                             delete_by_title("book.txt",titleToDelete);
                         }
                     }
@@ -241,11 +258,7 @@ enter your option: ");
                     printf("\n---------------\n");
                     while(1){
                         printf("What would you like to search?\n");
-                        printf("\
-1. Search for the book by title\n\
-2. search for the books by the author \n\
--1. to exit\n\
-enter your option: ");
+                        printf("1. Search for the book by title\n2. search for the books by the author \n-1. to exit\nenter your option: ");
                         scanf("%d", &n);
                         printf("\n---------------\n");
                         if (n == 1){//Layan_Title
@@ -259,7 +272,7 @@ enter your option: ");
                             scanf("%s", Author);
                             search_books_by_author("book.txt", Author); ///change the name of the file name
                         }
-                        else if (n == -1)
+                        else if(n == -1)
                             break;
                         else
                             printf("this is not an option in the menu\n");
@@ -296,60 +309,94 @@ enter your option: ");
         }
     }
     else if(option == 3){//by member:
-        int cnt = 0, userID, found=-1;
+        int cnt = 0, userID;
         while(cnt != 4){
-            printf("enter your user ID: ");
-            scanf("%d", &userID);
-            int userI = found = findUserWithUserID(userID, NOU, p); ///add function here
-            if(found == -1){
+            userID = findUserWithUserID(NOU, p); ///add function here
+            if(userID == -1){
                 cnt++;
-                printf("this user ID does not exist\n\
-                       you have %d chances left\n", 3-cnt);
+                printf("this user ID does not exist\nyou have %d chances left\n", 3-cnt);
             }
-            else{
+            else
+                break;
+        }
+        if(cnt == 4){//exceeded amount of member options {now in user oprion}
+            int n;
+            while(1){
+                printf("you are currently in the user option\n");
+                printf("What would you like to search?\n");
                 printf("\
-            what would you like to perform\n\
-            1. view your account details\n\
-            2. edit your data\n\
-            3. search for books by author\n\
-            4. search for book by title\n");
-                int x;
-                scanf("%d", &x);
-                while(1){
-                    if(x == -1)//exit the menu
-                        break;
-                    else if(x == 1){//see their data
-                        print_user(userI, p);
-                        break;
-                    }
-                    else if(x == 2){//edit their data
-                        editUserID(p, b, NOU, NOB, userI);
-                    }
-                    else if(x == 3){//search for the book by author
-                        char Author[20];
-                        printf("enter the author: ");
-                        scanf("%s", Author);
-                        search_books_by_author("book.txt", Author); ///change the file name
-                    }
-                    else if(x == 4){//search book by title
-                        int i = findBook(NOB, b);
+1. Search for the book by title\n\
+2. search for the books by the author \n\
+-1. to exit\n\
+enter your option: ");
+                scanf("%d", &n);
+                printf("\n---------------\n");
+                if (n == 1){//Layan_Title
+                    int i = findBook(NOB, b);
+                    if(i != -1)
                         print_book(i, b);
-                    }
-                    else
-                        printf("ERROR: invalid option");
-
                 }
+                else if (n == 2){//search for the book by author Tea
+                    char Author[20];
+                    printf("enter the name of the author: ");
+                    scanf("%s", Author);
+                    search_books_by_author("book.txt", Author); ///change the name of the file name
+                }
+                else if(n == -1)
+                    break;
+                else
+                    printf("this is not an option in the menu\n");
+                printf("\nTask completed!\n");
+                printf("---------------------------------------------------------------------------------------------------------\n");
             }
+        }
+        else{
+            int x=0;
+            while(x != -1){
+                printf("\
+what would you like to perform\n\
+1. view your account details\n\
+2. search for books by author\n\
+3. search for book by title\n\
+-1. to exit the menu\n\
+your choice: ");
+                scanf("%d", &x);
+                if(x == -1)//exit the menu
+                    break;
+                else if(x == 1){//see their data
+                    print_user(userID, p);
+                }
+                else if(x == 2){//search for the book by author
+                    char Author[20];
+                    printf("enter the author: ");
+                    scanf("%s", Author);
+                    search_books_by_author("book.txt", Author); ///change the file name
+                }
+                else if(x == 3){//search book by title
+                    int i = findBook(NOB, b);
+                    print_book(i, b);
+                }
+                else
+                    printf("ERROR: invalid option");
+                printf("-----------------\n");
+            }
+
         }
     }
     else{//if another option is entered:
         printf("this is not an option");
     }
-
-    //CLOSING THE FILES//
-    fclose(libBook);
-    fclose(libUser);
     //END MESSAGE TO USER//
-    printf("thank you for you daily dosage of knowledge. \nhave a great day, \nhope to see you here again soon!");
+    printf("\n\t***************************************************************************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t************   thank you for you daily dosage of knowledge.    ************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t************              have a great day,                    ************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t************        hope to see you here again soon!           ************");
+    printf("\n\t************                                                   ************");
+    printf("\n\t***************************************************************************");
     return 0;
 }
+
+
