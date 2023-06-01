@@ -62,24 +62,26 @@ void print_user(int i, struct person p[]){
     printf("phone: %.0lf\n", p[i].phone);
     printf("address: %s\n", p[i].address);
     printf("ID: %d \n", p[i].ID);
-    if(p[i].userBooks.numOfBooks == 0){
+    if(p[i].numOfBooks == 0){
         printf("this user currently has no borrowed books\n");
     }
     else{
         printf("borrowed books:\n");
-        for(int j=0; j<p[i].userBooks.numOfBooks; j++){
-            printf("book %d: %s\n", j+1, p[i].userBooks.BB[j].title);
+        for(int j=0; j<p[i].numOfBooks; j++){
+            printf("book %d: %s\n", j+1, p[i].BB[j]);
         }
     }
 }
-int findUserWithUserID(int userID, int NOU, struct person p[]){
-    int userI;
+int findUserWithUserID(int NOU, struct person p[]){
+    int userID;
     printf("enter the user ID you want to find: ");
     scanf("%d", &userID);
     for(int i=0; i<NOU; i++){
         if(userID == p[i].ID)
-            userI = i;
+            return i;
     }
-    return userI;
+    return -1;
 }
 #endif // SEARCH_BY_USER_H_INCLUDED
+
+
