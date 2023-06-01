@@ -10,13 +10,18 @@ int findBook(int NOB, struct book b[]){
             return i;
         }
     }
-    printf("the book was not found");
+    printf("the book was not found\n");
     return -1;
 }
 void print_book(int i, struct book b[]){
+    if(i == -1){
+        return;
+    }
     printf("book title: %s\n", b[i].title);
     printf("Author: %s\n", b[i].author);
     printf("books available: %d\n", b[i].amount);
     printf("quantity: %d\n", b[i].quantity);
 }
 #endif // SEARCH_BY_TITLE_H_INCLUDED
+
+
