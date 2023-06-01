@@ -310,7 +310,11 @@ enter your option: ");
     }
     else if(option == 3){//by member:
         int cnt = 0, userID;
+<<<<<<< HEAD
         while(cnt != 3){
+=======
+        while(cnt != 4){
+>>>>>>> c0cdf2338e5817795dc39ac7ed18922b14252d60
             userID = findUserWithUserID(NOU, p); ///add function here
             if(userID == -1){
                 cnt++;
@@ -319,7 +323,11 @@ enter your option: ");
             else
                 break;
         }
+<<<<<<< HEAD
         if(cnt == 3){//exceeded amount of member options {now in user oprion}
+=======
+        if(cnt == 4){//exceeded amount of member options {now in user oprion}
+>>>>>>> c0cdf2338e5817795dc39ac7ed18922b14252d60
             int n;
             while(1){
                 printf("you are currently in the user option\n");
@@ -398,3 +406,5 @@ your choice: ");
     printf("\n\t***************************************************************************");
     return 0;
 }
+
+
