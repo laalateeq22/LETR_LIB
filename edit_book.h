@@ -1,7 +1,8 @@
 #ifndef EDIT_BOOK_H_INCLUDED
 #define EDIT_BOOK_H_INCLUDED
 //rosi
-void editBook(Book b[], int numBooks) {
+// Function to edit book details
+void editBook(struct book b[], int numBooks) {
     char name[50];
     int i;
     int choice;
@@ -16,7 +17,7 @@ void editBook(Book b[], int numBooks) {
 
         // Search for the book by name
         for (i = 0; i < numBooks; i++) {
-            if (strcmp(b[i].name, name) == 0) {
+            if (strcmp(b[i].title, name) == 0) {
                 printf("Book found!\n");
                 printf("Select an option:\n");
                 printf("1. Edit author name\n");
@@ -59,14 +60,10 @@ void editBook(Book b[], int numBooks) {
 
     // Overwrite the entire file with the updated book details
     for (i = 0; i < numBooks; i++) {
-        fprintf(file, "%s %s %d %d\n", b[i].name, b[i].author, b[i].amount, b[i].quantity);
+        fprintf(file, "%s %s %d %d\n", b[i].title, b[i].author, b[i].amount, b[i].quantity);
     }
 
     fclose(file);
     printf("Book details updated successfully!\n");
 }
-
-
-
-
 #endif // EDIT_BOOK_H_INCLUDED
